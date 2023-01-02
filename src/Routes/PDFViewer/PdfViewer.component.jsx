@@ -14,18 +14,44 @@ const Viewer = () => {
 
     const [draw, setDraw] = useState(false)
     const [isDrawing, setIsDrawing] = useState(false)
+    const [drawState, setDrawState] = useState(0)
 
     const canvasRef = useRef(null);
     const overlayRef = useRef(null);
     const drawRef = useRef(null);
+
+    const [data, setData] = useState([])
+
+    const drawOverlay = () => {
+        let ctx = overlayRef.current.getContext("2d")
+        ctx.clearRect(0, 0, overlayRef.current.width, overlayRef.current.height)
+        ctx.lineWidth = "6";
+        data.forEach(({ type, posX, posY, width, height }) => {
+            if (type === 0) {
+                ctx.fillStyle = "rgba(0, 255, 0, 0.4)"
+                ctx.strokeStyle = "lightgreen"
+            } else {
+
+                ctx.fillStyle = "rgba(255, 165, 0, 0.4)"
+                ctx.strokeStyle = "orange"
+            }
+            ctx.strokeRect(posX, posY, width + 1, height + 1);
+            ctx.fillRect(posX, posY, width, height)
+        })
+    }
 
     const initOverlays = () => {
         overlayRef.current.width = canvasRef.current.width
         overlayRef.current.height = canvasRef.current.height
         drawRef.current.width = canvasRef.current.width
         drawRef.current.height = canvasRef.current.height
+
+        drawOverlay()
     }
 
+    useEffect(() => {
+        drawOverlay()
+    }, [data])
     const { pdfDocument, pdfPage } = usePdf({
         file: location.state.PDFLink,
         page: pageNumber,
@@ -49,6 +75,9 @@ const Viewer = () => {
     const handleClick = (e) => {
         e.preventDefault()
         e.stopPropagation()
+        if (!draw) {
+            return
+        }
         if (!isDrawing) {
             const rect = canvasRef.current.getBoundingClientRect()
             docXRef.current = rect.top
@@ -65,7 +94,6 @@ const Viewer = () => {
         e.preventDefault()
         e.stopPropagation()
         if (!isDrawing) {
-            console.log("o")
             return
         }
 
@@ -84,20 +112,22 @@ const Viewer = () => {
 
     const stopDrawing = () => {
         if (isDrawing) {
-            //Save Data
+            console.log(data)
+            setData(arr => [...arr, { type: drawState, page: pageNumber, posX: clickXRef.current, posY: clickYRef.current, width: widthRef.current, height: heightRef.current }])
+            drawRef.current.getContext("2d").clearRect(0, 0, drawRef.current.width, drawRef.current.height)
             setIsDrawing(false)
+            setDraw(false)
         }
-
     }
 
     const handleButton = (x) => {
         if (x === 0) {
-            //Set Color
-        } else {
-            //Set Color
+            setDrawState(0)
+        } else if (x === 1) {
+            console.log('h')
+            setDrawState(1)
         }
         setDraw(true)
-        setIsDrawing(true)
     }
 
     return (
