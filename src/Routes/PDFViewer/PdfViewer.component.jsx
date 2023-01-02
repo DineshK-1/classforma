@@ -13,13 +13,19 @@ const Viewer = () => {
 
     useEffect(() => {
         pdfjs.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.js";
-    });
+    }, []);
 
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
 
     function onDocumentLoadSuccess({ numPages }) {
         setNumPages(numPages);
+    }
+
+    const drawRect = () => {
+        const canvas = document.getElementsByClassName("react-pdf__Page__canvas")
+        const ctx = canvas[0].getContext('2d')
+        
     }
 
     return (
@@ -41,6 +47,7 @@ const Viewer = () => {
                 <div className="pages">
                     <button className="left" onClick={() => { setPageNumber((page) => { if (page > 1) { return page - 1 } else { return 1 } }) }}>&#60;</button>
                     <span>{pageNumber} of {numPages}</span>
+                    <button onClick={drawRect}>XD</button>
                     <button className="right" onClick={() => { setPageNumber((page) => { if (page < numPages) { return page + 1 } else { return numPages } }) }}>&#62;</button>
                 </div>
             </div>
