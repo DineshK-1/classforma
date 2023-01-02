@@ -34,10 +34,22 @@
 
 button.Title {
     background-color: orange;
+    transition: background-color 500ms;
+}
+
+button.Title:hover {
+    color: orange;
+    background-color: black;
 }
 
 button.Author {
     background-color: lightgreen;
+    transition: background-color 500ms;
+}
+
+button.Author:hover {
+    color: lightgreen;
+    background-color: black;
 }
 
 .pages {
@@ -58,18 +70,37 @@ button.Author {
 .pages button.right {
     padding: 5px 10px;
 }
-#pdf_viewport{
+
+#pdf_viewport {
     z-index: 1;
     position: absolute;
     left: 50%;
 }
-#overlay{
+
+#overlay {
     z-index: 2;
     position: absolute;
     left: 50%;
 }
-#draw{
+
+#draw {
     z-index: 3;
     position: absolute;
     left: 50%;
+}
+
+.alert {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: 5;
+    transform: translate(-50%);
+    background-color: lightgreen;
+    padding: 10px 20px;
+}
+
+.Boxes .box {
+    padding: 10px 20px;
+    font-weight: 500;
+    margin: 10px 0;
 }

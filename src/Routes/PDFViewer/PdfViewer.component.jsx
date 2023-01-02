@@ -7,7 +7,7 @@ import { usePdf } from '@mikecousins/react-pdf';
 import { useLocation } from "react-router";
 
 const Viewer = () => {
-    const location = useLocation()
+    const PDFLink = useLocation().state.PDFLink
 
     const [numPages, setNumPages] = useState(null);
     const [pageNumber, setPageNumber] = useState(1);
@@ -20,7 +20,10 @@ const Viewer = () => {
     const overlayRef = useRef(null);
     const drawRef = useRef(null);
 
-    const [data, setData] = useState([])
+    if (!localStorage.getItem(PDFLink)) {
+        localStorage.setItem(PDFLink, JSON.stringify([]))
+    }
+    const [data, setData] = useState(JSON.parse(localStorage.getItem(PDFLink)))
 
     const drawOverlay = () => {
         let ctx = overlayRef.current.getContext("2d")
@@ -35,7 +38,7 @@ const Viewer = () => {
                 ctx.fillStyle = "rgba(255, 165, 0, 0.4)"
                 ctx.strokeStyle = "orange"
             }
-            ctx.strokeRect(posX, posY, width + 1, height + 1);
+            ctx.strokeRect(posX, posY, width, height);
             ctx.fillRect(posX, posY, width, height)
         })
     }
@@ -51,9 +54,12 @@ const Viewer = () => {
 
     useEffect(() => {
         drawOverlay()
+        localStorage.setItem(PDFLink, JSON.stringify(data))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data])
+    // eslint-disable-next-line
     const { pdfDocument, pdfPage } = usePdf({
-        file: location.state.PDFLink,
+        file: PDFLink,
         page: pageNumber,
         canvasRef,
         onPageRenderSuccess: initOverlays,
@@ -103,16 +109,15 @@ const Viewer = () => {
         widthRef.current = mouseX - clickXRef.current
         heightRef.current = mouseY - clickYRef.current
 
-
-
         let ctx = drawRef.current.getContext("2d")
+
+        ctx.fillStyle = (drawState ? "rgba(255, 165, 0, 0.4)" : "rgba(0, 255, 0, 0.4)")
         ctx.clearRect(0, 0, drawRef.current.width, drawRef.current.height)
         ctx.fillRect(clickXRef.current, clickYRef.current, widthRef.current, heightRef.current)
     }
 
     const stopDrawing = () => {
         if (isDrawing) {
-            console.log(data)
             setData(arr => [...arr, { type: drawState, page: pageNumber, posX: clickXRef.current, posY: clickYRef.current, width: widthRef.current, height: heightRef.current }])
             drawRef.current.getContext("2d").clearRect(0, 0, drawRef.current.width, drawRef.current.height)
             setIsDrawing(false)
@@ -132,16 +137,21 @@ const Viewer = () => {
 
     return (
         <div className="wrapper">
+            {draw && <span className="alert" style={drawState ? { backgroundColor: "orange" } : { backgroundColor: "lightgreen" }}>Currently Drawing</span>}
             <div className="left">
                 <div className="Labels">
                     <Title content={"Labels"} />
-                    {draw && <span>Is Drawing</span>}
                     <button className="Title" onClick={() => handleButton(1)}>Title</button>
                     <button className="Author" onClick={() => handleButton(0)}>Author</button>
-                    {isDrawing && <span>Is Drawing...</span>}
                 </div>
                 <div className="Boxes">
                     <Title content={"Boxes"} />
+                    {data.map(({ type, posX, posY, width, height }) => {
+                        return (<div className="box" style={type ? { backgroundColor: "orange" } : { backgroundColor: "lightgreen" }}>
+                            <span>x:{posX}, y:{posY}, height: {height}, width: {width}</span>
+                        </div>)
+                    })}
+
                 </div>
             </div>
             <div className="right">
