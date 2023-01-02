@@ -129,7 +129,6 @@ const Viewer = () => {
         if (x === 0) {
             setDrawState(0)
         } else if (x === 1) {
-            console.log('h')
             setDrawState(1)
         }
         setDraw(true)
@@ -163,7 +162,6 @@ const Viewer = () => {
                     <div className="pages">
                         <button className="left" onClick={() => { setPageNumber((page) => { if (page > 1) { return page - 1 } else { return 1 } }) }}>&#60;</button>
                         <span>{pageNumber} of {numPages}</span>
-                        <button>XD</button>
                         <button className="right" onClick={() => { setPageNumber((page) => { if (page < numPages) { return page + 1 } else { return numPages } }) }}>&#62;</button>
                     </div>
                 </div>
