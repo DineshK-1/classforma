@@ -1,12 +1,8 @@
-.App{
+.App {
     padding: 1rem;
     width: max-content;
-  }
-  
-  .App ul{
+}
+
+.App ul {
     margin-right: 3rem;
-  }
-  
-  .App h3{
-    margin: 0;
-  }
+}
