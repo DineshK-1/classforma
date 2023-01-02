@@ -16,57 +16,78 @@ const Viewer = () => {
     const [isDrawing, setIsDrawing] = useState(false)
 
     const canvasRef = useRef(null);
+    const overlayRef = useRef(null);
+    const drawRef = useRef(null);
+
+    const initOverlays = () => {
+        overlayRef.current.width = canvasRef.current.width
+        overlayRef.current.height = canvasRef.current.height
+        drawRef.current.width = canvasRef.current.width
+        drawRef.current.height = canvasRef.current.height
+    }
 
     const { pdfDocument, pdfPage } = usePdf({
         file: location.state.PDFLink,
         page: pageNumber,
         canvasRef,
+        onPageRenderSuccess: initOverlays,
     });
 
     const docXRef = useRef()
     const docYRef = useRef()
+    const clickXRef = useRef()
+    const clickYRef = useRef()
+    const widthRef = useRef()
+    const heightRef = useRef()
 
     useEffect(() => {
         if (pdfDocument) {
-            setNumPages(pdfDocument.numPages)            
+            setNumPages(pdfDocument.numPages)
         }
     }, [pdfDocument])
 
-    
-    const clickXRef = useRef()
-    const clickYRef = useRef()
-
     const handleClick = (e) => {
-        setIsDrawing(true)
-        if(!isDrawing){
+        e.preventDefault()
+        e.stopPropagation()
+        if (!isDrawing) {
             const rect = canvasRef.current.getBoundingClientRect()
             docXRef.current = rect.top
             docYRef.current = rect.left
-            clickXRef.current = e.clientX - docXRef.current
-            clickYRef.current = e.clientY - docYRef.current
+
+            clickXRef.current = e.clientX - docYRef.current
+            clickYRef.current = e.clientY - docXRef.current
+
             setIsDrawing(true)
         }
     }
 
     const drawRect = (e) => {
-        if(!isDrawing){
+        e.preventDefault()
+        e.stopPropagation()
+        if (!isDrawing) {
             console.log("o")
             return
         }
-        const mouseX = clickXRef - docXRef.current
-        const mouseY = clickYRef- docYRef.current
 
-        const rectWidth = mouseX - clickXRef.current
-        const rectHeight = mouseY - clickYRef.current
+        const mouseX = e.clientX - docYRef.current
+        const mouseY = e.clientY - docXRef.current
 
-        
-        let ctx = canvasRef.current.getContext("2d")
-        ctx.fillRect(mouseX, mouseY, rectWidth, rectHeight)
-        console.log(mouseX, mouseY, rectWidth, rectHeight)
+        widthRef.current = mouseX - clickXRef.current
+        heightRef.current = mouseY - clickYRef.current
+
+
+
+        let ctx = drawRef.current.getContext("2d")
+        ctx.clearRect(0, 0, drawRef.current.width, drawRef.current.height)
+        ctx.fillRect(clickXRef.current, clickYRef.current, widthRef.current, heightRef.current)
     }
 
     const stopDrawing = () => {
-        setIsDrawing(false)
+        if (isDrawing) {
+            //Save Data
+            setIsDrawing(false)
+        }
+
     }
 
     const handleButton = (x) => {
@@ -84,8 +105,10 @@ const Viewer = () => {
             <div className="left">
                 <div className="Labels">
                     <Title content={"Labels"} />
+                    {draw && <span>Is Drawing</span>}
                     <button className="Title" onClick={() => handleButton(1)}>Title</button>
                     <button className="Author" onClick={() => handleButton(0)}>Author</button>
+                    {isDrawing && <span>Is Drawing...</span>}
                 </div>
                 <div className="Boxes">
                     <Title content={"Boxes"} />
@@ -93,12 +116,16 @@ const Viewer = () => {
             </div>
             <div className="right">
                 {!pdfDocument && <span>Loading PDF Document...</span>}
-                <canvas id="pdf_viewport" ref={canvasRef} onMouseDown={handleClick} onMouseMove={drawRect} onMouseUp={stopDrawing} onMouseLeave={stopDrawing}></canvas>
-                <div className="pages">
-                    <button className="left" onClick={() => { setPageNumber((page) => { if (page > 1) { return page - 1 } else { return 1 } }) }}>&#60;</button>
-                    <span>{pageNumber} of {numPages}</span>
-                    <button>XD</button>
-                    <button className="right" onClick={() => { setPageNumber((page) => { if (page < numPages) { return page + 1 } else { return numPages } }) }}>&#62;</button>
+                <div className="viewport">
+                    <canvas id="pdf_viewport" ref={canvasRef}></canvas>
+                    <canvas id="overlay" ref={overlayRef}></canvas>
+                    <canvas id="draw" ref={drawRef} onMouseDown={handleClick} onMouseMove={drawRect} onMouseUp={stopDrawing} onMouseLeave={stopDrawing}></canvas>
+                    <div className="pages">
+                        <button className="left" onClick={() => { setPageNumber((page) => { if (page > 1) { return page - 1 } else { return 1 } }) }}>&#60;</button>
+                        <span>{pageNumber} of {numPages}</span>
+                        <button>XD</button>
+                        <button className="right" onClick={() => { setPageNumber((page) => { if (page < numPages) { return page + 1 } else { return numPages } }) }}>&#62;</button>
+                    </div>
                 </div>
             </div>
         </div>

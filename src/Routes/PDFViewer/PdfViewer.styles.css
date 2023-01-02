@@ -58,3 +58,18 @@ button.Author {
 .pages button.right {
     padding: 5px 10px;
 }
+#pdf_viewport{
+    z-index: 1;
+    position: absolute;
+    left: 50%;
+}
+#overlay{
+    z-index: 2;
+    position: absolute;
+    left: 50%;
+}
+#draw{
+    z-index: 3;
+    position: absolute;
+    left: 50%;
+}
