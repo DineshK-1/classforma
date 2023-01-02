@@ -16,6 +16,7 @@
 .wrapper .left .Labels {
     height: 48%;
 }
+
 .wrapper .left .Labels button {
     border: 0;
     padding: 10px 20px;
@@ -27,29 +28,33 @@
     height: 48%;
 }
 
-.wrapper .right{
+.wrapper .right {
     width: fit-content;
 }
 
-button.Title{
+button.Title {
     background-color: orange;
 }
-button.Author{
+
+button.Author {
     background-color: lightgreen;
 }
 
-.pages{
+.pages {
     display: flex;
     width: 200px;
     align-items: center;
     margin: 0 auto;
 }
-.pages button.left{
+
+.pages button.left {
     padding: 5px 10px;
 }
-.pages span{
+
+.pages span {
     padding: 5px 10px;
 }
-.pages button.right{
+
+.pages button.right {
     padding: 5px 10px;
 }

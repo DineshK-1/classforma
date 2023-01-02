@@ -5,7 +5,7 @@ import Viewer from './Routes/PDFViewer/PdfViewer.component';
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />}/>
+      <Route path="/" element={<Home />} />
       <Route path="/PDFViewer" element={<Viewer />} />
     </Routes>
   );
