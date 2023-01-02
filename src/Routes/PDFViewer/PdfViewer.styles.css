@@ -6,7 +6,7 @@
     padding: 1rem;
 }
 
-.wrapper .left {
+.wrapper div.left {
     display: flex;
     width: 48%;
     flex-direction: column;
@@ -28,7 +28,7 @@
 }
 
 .wrapper .right{
-    width: 48%;
+    width: fit-content;
 }
 
 button.Title{
@@ -36,4 +36,20 @@ button.Title{
 }
 button.Author{
     background-color: lightgreen;
+}
+
+.pages{
+    display: flex;
+    width: 200px;
+    align-items: center;
+    margin: 0 auto;
+}
+.pages button.left{
+    padding: 5px 10px;
+}
+.pages span{
+    padding: 5px 10px;
+}
+.pages button.right{
+    padding: 5px 10px;
 }

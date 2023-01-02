@@ -38,9 +38,11 @@ const Viewer = () => {
                 <Document file={location.state.PDFLink} onLoadSuccess={onDocumentLoadSuccess}>
                     <Page pageNumber={pageNumber} />
                 </Document>
-                <p>
-                    Page {pageNumber} of {numPages}
-                </p>
+                <div className="pages">
+                    <button className="left" onClick={() => { setPageNumber((page) => { if (page > 1) { return page - 1 } else { return 1 } }) }}>&#60;</button>
+                    <span>{pageNumber} of {numPages}</span>
+                    <button className="right" onClick={() => { setPageNumber((page) => { if (page < numPages) { return page + 1 } else { return numPages } }) }}>&#62;</button>
+                </div>
             </div>
         </div>
     )
